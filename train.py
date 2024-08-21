@@ -37,8 +37,8 @@ def str2bool(v):
 class get_al_hyperparams():
     def __init__(self, dataset_name='voc'):
         self.dataset_name = dataset_name
-        self.dataset_path = {'voc': '/usr/wiss/elezi/data/VOC0712',
-                             'coco': '/usr/wiss/elezi/data/coco'}
+        self.dataset_path = {'voc': '/content/AL-SSL/data/VOC0712',
+                             'coco': '/content/AL-SSL/data/coco'}
 
         self.num_ims = {'voc': 16551, 'coco': 82081}
         self.num_init = {'voc': 2011, 'coco': 5000}
@@ -141,7 +141,7 @@ else:
     torch.set_default_tensor_type('torch.FloatTensor')
 
 if not os.path.exists(args.save_folder):
-    os.mkdir(args.save_folder)
+    os.makedirs(args.save_folder)  # This will create all necessary directories
 
 
 def load_net_optimizer_multi(cfg):
@@ -246,7 +246,7 @@ def train(dataset, data_loader, cfg, labeled_set, supervised_dataset, indices):
         net, optimizer = load_net_optimizer_multi(cfg)
         net.train()
         for iteration in range(cfg['max_iter']):
-            print(iteration)
+            print("##myiters",iteration)
 
             if iteration in cfg['lr_steps']:
                 step_index += 1
@@ -316,13 +316,14 @@ def train(dataset, data_loader, cfg, labeled_set, supervised_dataset, indices):
                           float(optimizer.param_groups[0]['lr']),
                           len(sup_image_index)))
 
-            if iteration != 0 and (iteration + 1) % 120000 == 0:
+            if iteration != 0 and (iteration + 1) % 15 == 0:
                 print('Saving state, iter:', iteration)
-                net_name = 'weights/' + repr(iteration + 1) + args.criterion_select + '_id_' + str(args.id)  + \
+                net_name = '/content/al_ssl/weights' + repr(iteration + 1) + args.criterion_select + '_id_' + str(args.id)  + \
                            '_pl_threshold_' + str(args.pseudo_threshold) + '_labeled_set_' + str(len(labeled_set)) + '_.pth'
+                print(net_name)
                 torch.save(net.state_dict(), net_name)
 
-            if iteration >= 119000:
+            if iteration >= 13:
                 finish_flag = False
     return net, net_name
 
@@ -363,6 +364,7 @@ def main():
 
     # do active learning cycles
     for i in range(args.num_cycles):
+        print( "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS" , args.num_cycles)
         net.eval()
 
         if args.do_AL:
