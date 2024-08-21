@@ -39,7 +39,7 @@ VOC_CLASSES = (  # always index 0
 
 # note: if you used our download scripts, this should be right
 # VOC_ROOT = osp.join(HOME, "tmp/VOC0712/")
-VOC_ROOT = '/usr/wiss/elezi/data/VOC0712'
+VOC_ROOT = '/content/AL-SSL/data/VOCdevkit'
 
 class VOCAnnotationTransform(object):
     """Transforms a VOC annotation into a Tensor of bbox coords and label index
@@ -110,7 +110,7 @@ class VOCDetection(data.Dataset):
                  image_sets=[('2007', 'trainval'), ('2012', 'trainval')],
                  transform=None, target_transform=VOCAnnotationTransform(),
                  dataset_name='VOC0712', pseudo_labels={}, bounding_box_dict={}):
-        self.root = root
+        self.root = '/content/AL-SSL/data/VOCdevkit'
         self.image_set = image_sets
         self.transform = transform
         self.target_transform = target_transform
