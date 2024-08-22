@@ -446,7 +446,7 @@ if __name__ == '__main__':
     for key in net.state_dict():
         print(key)
 
-    list_of_folders = ['weights'] # folder where the saved networks are
+    list_of_folders = ['/content/al_ssl/weights'] # folder where the saved networks are
     for folder in list_of_folders:
         list_nets = os.listdir(folder)
         for nnn in sorted(list_nets):
