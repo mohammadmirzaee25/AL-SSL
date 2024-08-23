@@ -157,15 +157,32 @@ def write_voc_results_file(all_boxes, dataset):
         with open(filename, 'wt') as f:
             for im_ind, index in enumerate(dataset.ids):
                 dets = all_boxes[cls_ind+1][im_ind]
-                if dets == []:
+                
+                # Ensure dets is a numpy array, even if it's empty
+                if dets is None or dets.size == 0:
                     continue
+                
                 # the VOCdevkit expects 1-based indices
                 for k in range(dets.shape[0]):
                     f.write('{:s} {:.3f} {:.1f} {:.1f} {:.1f} {:.1f}\n'.
                             format(index[1], dets[k, -1],
                                    dets[k, 0] + 1, dets[k, 1] + 1,
                                    dets[k, 2] + 1, dets[k, 3] + 1))
-
+# def write_voc_results_file(all_boxes, dataset):
+#     for cls_ind, cls in enumerate(labelmap):
+#         print('Writing {:s} VOC results file'.format(cls))
+#         filename = get_voc_results_file_template(set_type, cls)
+#         with open(filename, 'wt') as f:
+#             for im_ind, index in enumerate(dataset.ids):
+#                 dets = all_boxes[cls_ind+1][im_ind]
+#                 if dets == []:
+#                     continue
+#                 # the VOCdevkit expects 1-based indices
+#                 for k in range(dets.shape[0]):
+#                     f.write('{:s} {:.3f} {:.1f} {:.1f} {:.1f} {:.1f}\n'.
+#                             format(index[1], dets[k, -1],
+#                                    dets[k, 0] + 1, dets[k, 1] + 1,
+#                                    dets[k, 2] + 1, dets[k, 3] + 1))
 
 def do_python_eval(output_dir='output', use_07=True):
     cachedir = os.path.join(devkit_path, 'annotations_cache')
