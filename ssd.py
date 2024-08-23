@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 from layers import *
+from layers.functions.detection import DetectWrapper
 from data import voc300, voc512, coco
 import os
 
@@ -48,7 +49,7 @@ class SSD(nn.Module):
 
         if phase == 'test':
             self.softmax = nn.Softmax(dim=-1)
-            self.detect = Detect(num_classes, 0, 200, 0.01, 0.45)
+            self.detect = DetectWrapper(num_classes, 21 , 200, 0.01, 0.45 )
 
     def forward(self, x):
         """Applies network layers and ops on input image(s) x.
