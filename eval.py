@@ -439,34 +439,36 @@ if __name__ == '__main__':
                 student_model_dict[key] * (1 - keep_rate) + value * keep_rate)"""
 
     # load net
-    num_classes = len(labelmap) + 1                      # +1 for background
+    num_classes = len(labelmap) + 1   
+    print("NUMCLASSES" , num_classes)                   # +1 for background
     net = build_ssd('test', 300, num_classes)            # initialize SSD
     net = nn.DataParallel(net)
     fi_write = open("results.txt", "a")
-    for key in net.state_dict():
-        print(key)
+    # for key in net.state_dict():
+    #     print(key)
 
-    list_of_folders = ['/content/al_ssl/weights'] # folder where the saved networks are
-    for folder in list_of_folders:
-        list_nets = os.listdir(folder)
-        for nnn in sorted(list_nets):
+    # list_of_folders = ['/content/al_ssl/weights15entropy_id_2_pl_threshold_0.99_labeled_set_3011_.pth'] # folder where the saved networks are
+    # for folder in list_of_folders:
+    #     list_nets = os.listdir(folder)
+    #     for nnn in sorted(list_nets):
             
-            net.load_state_dict(torch.load(os.path.join(folder, nnn)))
-            net.eval()
-            print('Finished loading model!')
-            # load data
-            dataset = VOCDetection(args.voc_root, image_sets=[('2007', 'test')],
-                                   transform=BaseTransform(300, dataset_mean),
-                                   target_transform=VOCAnnotationTransform())
-            if args.cuda:
-                net = net.cuda()
-                cudnn.benchmark = True
-            # evaluation
-            m_ap = test_net(args.save_folder, net, args.cuda, dataset,
-                     BaseTransform(300, dataset_mean), args.top_k, 300,
-                     thresh=args.confidence_threshold)
-            print(m_ap)
-            fi_write.write(folder + '_____' + nnn + ": " +str(np.mean(m_ap)))
-            fi_write.write('\n')
+    net.load_state_dict(torch.load("/content/al_ssl/weights15entropy_id_2_pl_threshold_0.99_labeled_set_3011_.pth"))
+    net.eval()
+    print('Finished loading model!')
+    # load data
+    dataset = VOCDetection(args.voc_root, image_sets=[('2007', 'test')],
+                            transform=BaseTransform(300, dataset_mean),
+                            target_transform=VOCAnnotationTransform())
+
+    if args.cuda:
+        net = net.cuda()
+        cudnn.benchmark = True
+    # evaluation
+    m_ap = test_net(args.save_folder, net, args.cuda, dataset,
+              BaseTransform(300, dataset_mean), args.top_k, 300,
+              thresh=args.confidence_threshold)
+    print(m_ap)
+    fi_write.write(folder + '_____' + nnn + ": " +str(np.mean(m_ap)))
+    fi_write.write('\n')
     fi_write.close()
 
