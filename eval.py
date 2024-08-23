@@ -451,7 +451,7 @@ if __name__ == '__main__':
     # for folder in list_of_folders:
     #     list_nets = os.listdir(folder)
     #     for nnn in sorted(list_nets):
-            
+             
     net.load_state_dict(torch.load("/content/al_ssl/weights15entropy_id_2_pl_threshold_0.99_labeled_set_3011_.pth"))
     net.eval()
     print('Finished loading model!')
