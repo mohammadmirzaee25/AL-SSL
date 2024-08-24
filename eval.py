@@ -444,48 +444,48 @@ def evaluate_detections(box_list, output_dir, dataset):
 
 
 if __name__ == '__main__':
-    """
-    student_model_dict = {}
-    for key, value in model_student.state_dict().items():
-        student_model_dict[key] = value
-
-    new_teacher_dict = OrderedDict()
-    for key, value in model_teacher.state_dict().items():
-        if key in student_model_dict.keys():
-            new_teacher_dict[key] = (
-                student_model_dict[key] * (1 - keep_rate) + value * keep_rate)"""
-
-    # load net
-    num_classes = len(labelmap) + 1   
-    print("NUMCLASSES" , num_classes)                   # +1 for background
-    net = build_ssd('test', 300, num_classes)            # initialize SSD
+    # Initialize some variables
+    num_classes = len(labelmap) + 1  # +1 for background
+    print("NUMCLASSES", num_classes)
+    
+    # Initialize SSD model
+    net = build_ssd('test', 300, num_classes)  # initialize SSD
     net = nn.DataParallel(net)
+
+    # Open the results file
     fi_write = open("results.txt", "a")
-    # for key in net.state_dict():
-    #     print(key)
 
-    # list_of_folders = ['/content/al_ssl/weights15entropy_id_2_pl_threshold_0.99_labeled_set_3011_.pth'] # folder where the saved networks are
-    # for folder in list_of_folders:
-    #     list_nets = os.listdir(folder)
-    #     for nnn in sorted(list_nets):
-             
-    net.load_state_dict(torch.load("/content/al_ssl/weights15entropy_id_2_pl_threshold_0.99_labeled_set_3011_.pth"))
-    net.eval()
-    print('Finished loading model!')
-    # load data
-    dataset = VOCDetection(args.voc_root, image_sets=[('2007', 'test')],
-                            transform=BaseTransform(300, dataset_mean),
-                            target_transform=VOCAnnotationTransform())
+    # Specify the folder containing the .pth files
+    folder_path = "/content/al_ssl/"
+    
+    # Loop over all files in the folder
+    for file_name in os.listdir(folder_path):
+        if file_name.endswith(".pth"):
+            full_path = os.path.join(folder_path, file_name)
+            
+            # Load the model state dict
+            net.load_state_dict(torch.load(full_path))
+            net.eval()
+            print(f'Finished loading model {file_name}!')
 
-    if args.cuda:
-        net = net.cuda()
-        cudnn.benchmark = True
-    # evaluation
-    m_ap = test_net(args.save_folder, net, args.cuda, dataset,
-              BaseTransform(300, dataset_mean), args.top_k, 300,
-              thresh=args.confidence_threshold)
-    print(m_ap)
-    fi_write.write(folder + '_____' + nnn + ": " +str(np.mean(m_ap)))
-    fi_write.write('\n')
+            # Load data
+            dataset = VOCDetection(args.voc_root, image_sets=[('2007', 'test')],
+                                   transform=BaseTransform(300, dataset_mean),
+                                   target_transform=VOCAnnotationTransform())
+
+            if args.cuda:
+                net = net.cuda()
+                cudnn.benchmark = True
+
+            # Perform evaluation
+            m_ap = test_net(args.save_folder, net, args.cuda, dataset,
+                            BaseTransform(300, dataset_mean), args.top_k, 300,
+                            thresh=args.confidence_threshold)
+            
+            # Print and write the results
+            print(m_ap)
+            fi_write.write(file_name + ": " + str(np.mean(m_ap)) + "\n")
+
+    # Close the results file
     fi_write.close()
 
