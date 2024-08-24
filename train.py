@@ -316,14 +316,14 @@ def train(dataset, data_loader, cfg, labeled_set, supervised_dataset, indices):
                           float(optimizer.param_groups[0]['lr']),
                           len(sup_image_index)))
 
-            if iteration != 0 and (iteration + 1) % 15 == 0:
+            if iteration != 0 and (iteration + 1) % 5000 == 0:
                 print('Saving state, iter:', iteration)
                 net_name = '/content/al_ssl/weights' + repr(iteration + 1) + args.criterion_select + '_id_' + str(args.id)  + \
                            '_pl_threshold_' + str(args.pseudo_threshold) + '_labeled_set_' + str(len(labeled_set)) + '_.pth'
                 print(net_name)
                 torch.save(net.state_dict(), net_name)
 
-            if iteration >= 13:
+            if iteration >= 4900:
                 finish_flag = False
     return net, net_name
 
@@ -364,7 +364,7 @@ def main():
 
     # do active learning cycles
     for i in range(args.num_cycles):
-        print( "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS" , args.num_cycles)
+        print( "End Of cycle " , args.num_cycles)
         net.eval()
 
         if args.do_AL:
