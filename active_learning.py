@@ -116,7 +116,7 @@ def active_learning_entropy(args, batch_iterator, labeled_set, unlabeled_set, ne
     thresh = args.thresh
 
  #   for j in range(len(batch_iterator)): # 3000
-    for j in range(5): # 3000
+    for j in range(len(batch_iterator)): # 3000
         print(j)
         images, lab, _ = next(batch_iterator)
         images = images.cuda()
